@@ -641,18 +641,37 @@ export const ShopProvider = ({ children }) => {
       signedInAt: new Date().toISOString()
     };
 
+    // Update the shop profile to the new user's details
     setShop(prev => ({
       ...prev,
       name: cleanShopName,
       ownerName: cleanName,
-      address: cleanLocation
+      staffName: '',
+      address: cleanLocation,
+      pin: '1234',
+      accountNumber: '',
+      bankName: '',
+      accountName: ''
     }));
+
+    // Clear all existing demo data — every new account starts with a clean slate
+    setCustomers([]);
+    setEntries([]);
+
+    // Build a fresh welcome audit log (after clearing old ones)
+    const welcomeLog = {
+      id: 'log_' + Date.now(),
+      actorName: cleanName,
+      actorRole: assignedRole,
+      action: `Welcome! Account created for ${cleanShopName}. Your ledger is ready to use.`,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' today'
+    };
+    setAuditLogs([welcomeLog]);
 
     setUsers(prev => [newUser, ...prev]);
     setCurrentRole(assignedRole);
     setAuthUser(newUser);
     setIsAuthenticated(true);
-    addAuditLog(`Created account: ${cleanName} (${cleanEmail}) for ${cleanShopName}`);
     return { success: true, user: newUser };
   };
 
